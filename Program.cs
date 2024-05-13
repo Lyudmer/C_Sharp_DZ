@@ -21,7 +21,7 @@ namespace DZGame
                 Attempts = output.GetIntInput("Введите количество попыток: ")
             };
 
-            var game = new GuessingGame(new RandomNumGenerator(), output, settings);
+            var game = new GuessingGame(new RandomNumGenerator(), output, validator, settings);
             game.RunGame();
         }
         public interface IRandomNumGenerator
@@ -66,8 +66,9 @@ namespace DZGame
         }
         public interface IInputValid
         {
-            bool ValidGameSettings(GameSettings settings);
+            bool ValidateGameSettings(GameSettings settings);
         }
+
         public class GameSettingsValid : IInputValid
         {
             public bool ValidateGameSettings(GameSettings settings)
@@ -86,11 +87,6 @@ namespace DZGame
 
                 return true;
             }
-
-            public bool ValidGameSettings(GameSettings settings)
-            {
-                throw new NotImplementedException();
-            }
         }
         public class GameSettings
         {
@@ -103,20 +99,25 @@ namespace DZGame
         {
             private readonly IRandomNumGenerator _randomNumGenerator;
             private readonly IGameOutput _gameOutput;
+            private readonly IInputValid _inputValid;
             private readonly GameSettings _settings;
             private int _secretNumber;
             private int _attempts;
 
-            public GuessingGame(IRandomNumGenerator randomNumGenerator, IGameOutput gameOutput, GameSettings settings)
+            public GuessingGame(IRandomNumGenerator randomNumGenerator, IGameOutput gameOutput, IInputValid inputValid, GameSettings settings)
             {
                 _randomNumGenerator = randomNumGenerator;
                 _gameOutput = gameOutput;
+                _inputValid = inputValid;
                 _settings = settings;
             }
 
             public void RunGame()
             {
-                
+                if (!_inputValid.ValidateGameSettings(_settings))
+                {
+                    return;
+                }
                 _secretNumber = _randomNumGenerator.Generate(_settings.MinVal, _settings.MaxVal);
 
                 _attempts = 0;
