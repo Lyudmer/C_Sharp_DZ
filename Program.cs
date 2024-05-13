@@ -42,7 +42,6 @@ namespace DZGame
         public interface IGameOutput
         {
             void OutMessage(string message);
-            int GetInput();
             int GetIntInput(string message);
         }
 
@@ -52,16 +51,9 @@ namespace DZGame
             {
                 Console.WriteLine(message);
             }
-
-            public int GetInput()
-            {
-                return Convert.ToInt32(Console.ReadLine());
-            }
-
             public int GetIntInput(string message)
             {
                 int inNum;
-
                 while (true) 
                 {
                     Console.Write(message);
@@ -70,6 +62,7 @@ namespace DZGame
                 } 
                 return inNum;
             }
+            
         }
         public interface IInputValid
         {
@@ -132,7 +125,7 @@ namespace DZGame
                 while (_attempts < _settings.Attempts)
                 {
                     _attempts++;
-                    int inVal = _gameOutput.GetInput();
+                    int inVal = _gameOutput.GetIntInput("Введите Ваше число: ");
 
                     if (inVal == _secretNumber)
                     {
